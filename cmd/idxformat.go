@@ -56,20 +56,28 @@ func (cmd *formatCmd) Run(_ *cobra.Command, args []string) {
 	}
 
 	for i, d := range i.FanoutMapping {
+		if d < 0 {
+			continue
+		}
 		fmt.Printf("FanoutMapping[%02x] = %v\n", i, d)
 	}
 
 	for i, d := range i.Names {
-		fmt.Printf("Names[%v] = %x\n", i, d)
+		for j := 0; j < len(d)-19; j += 20 {
+			fmt.Printf("Names[%v,%d] = %x\n", i, j/20, d[j:j+20])
+		}
 	}
 
 	for i, d := range i.Offset32 {
-		offset := fmt.Sprintf("%x", d)
-		n, err := strconv.ParseUint(offset, 16, 32)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "parse %x: %v\n", offset, err)
+		for j := 0; j < len(d)-3; j += 4 {
+			offset := fmt.Sprintf("%x", d[j:j+4])
+			n, err := strconv.ParseUint(offset, 16, 32)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "parse %x: %v\n", offset, err)
+				return
+			}
+			fmt.Printf("Offset[%v,%d] = %d\n", i, j>>2, n)
 		}
-		fmt.Printf("Offset32[%v] = %d\n", i, n)
 	}
 
 	for i, d := range i.CRC32 {
