@@ -78,12 +78,18 @@ func (cmd *readPackCmd) Run(_ *cobra.Command, args []string) {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "uncompress %v err: %v\n", packfile, err)
 		}
+		fmt.Printf("Content bytes length = %v\n", len(content))
+		fmt.Printf("Content bytes= \n%v\n", content)
+		fmt.Printf("Content = \n%v\n", string(content))
+		return
 	}
 
-	fmt.Printf("Content bytes length = %v\n", len(content))
-	fmt.Printf("Content bytes= \n%v\n", content)
-	if t < 5 {
-		fmt.Printf("Content = \n%v\n", string(content))
+	if i+int(size) > len(content) {
+		fmt.Printf("Content bytes length = %v\n", len(content))
+		fmt.Printf("Content bytes= \n%v\n", content)
+	} else {
+		fmt.Printf("Content bytes length = %v\n", size)
+		fmt.Printf("Content bytes= \n%v\n", content[i:i+int(size)])
 	}
 }
 
@@ -96,5 +102,5 @@ func init() {
 		Run:   readPack.Run,
 	}
 
-	GitindexCmd.AddCommand(cmd)
+	Cmd.AddCommand(cmd)
 }

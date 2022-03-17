@@ -94,5 +94,5 @@ func init() {
 		Run:   format.Run,
 	}
 
-	GitindexCmd.AddCommand(cmd)
+	Cmd.AddCommand(cmd)
 }

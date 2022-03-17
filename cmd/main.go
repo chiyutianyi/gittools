@@ -9,15 +9,15 @@ import (
 	"github.com/chiyutianyi/gittools/pkg/version"
 )
 
-// GitindexCmd represents the base command when called without any subcommands
-var GitindexCmd = &cobra.Command{
+// Cmd represents the base command when called without any subcommands
+var Cmd = &cobra.Command{
 	Use:     "gittools",
 	Short:   "git tools",
 	Version: version.Version(),
 }
 
 func main() {
-	if err := GitindexCmd.Execute(); err != nil {
+	if err := Cmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "start gittools error: %v", err)
 		os.Exit(1)
 	}
