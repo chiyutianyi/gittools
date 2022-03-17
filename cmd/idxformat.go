@@ -3,18 +3,28 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/go-git/go-git/v5/plumbing/format/idxfile"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	args := os.Args
-	if len(args) < 2 {
-		fmt.Println("Usage: idxfile <idx file>")
+type formatCmd struct {
+}
+
+func (cmd *formatCmd) Run(_ *cobra.Command, args []string) {
+	if len(args) < 1 {
+		fmt.Println("Usage: gittools idx-format <idx file>")
 		os.Exit(1)
 	}
 
-	idx := args[1]
+	idx := args[0]
+
+	if !strings.HasSuffix(idx, ".idx") {
+		fmt.Fprintf(os.Stderr, "packfile index %v not end with .idx\n", idx)
+		return
+	}
 
 	f, err := os.Open(idx)
 	if err != nil {
@@ -54,10 +64,27 @@ func main() {
 	}
 
 	for i, d := range i.Offset32 {
-		fmt.Printf("Offset32[%v] = %x\n", i, d)
+		offset := fmt.Sprintf("%x", d)
+		n, err := strconv.ParseUint(offset, 16, 32)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "parse %x: %v\n", offset, err)
+		}
+		fmt.Printf("Offset32[%v] = %d\n", i, n)
 	}
 
 	for i, d := range i.CRC32 {
 		fmt.Printf("CRC32[%v] = %x\n", i, d)
 	}
+}
+
+func init() {
+	format := &formatCmd{}
+
+	cmd := &cobra.Command{
+		Use:   "idx-format",
+		Short: "format index file",
+		Run:   format.Run,
+	}
+
+	GitindexCmd.AddCommand(cmd)
 }
