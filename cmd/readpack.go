@@ -46,7 +46,6 @@ func (cmd *readPackCmd) Run(_ *cobra.Command, args []string) {
 
 	content := make([]byte, length)
 	pack.ReadAt(content, offset)
-	fmt.Printf("Content = \n%v\n", content)
 
 	t := git.ParseType(content[0])
 	if t == 0 || t > 7 {
@@ -70,21 +69,29 @@ func (cmd *readPackCmd) Run(_ *cobra.Command, args []string) {
 
 	fmt.Printf("Size = %v\n", size)
 
-	content, err = utils.ZlibUncompress(content[i+1:])
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "uncompress %v err: %v\n", packfile, err)
+	if size == 0 {
+		return
+	}
+
+	if t < 5 {
+		content, err = utils.ZlibUncompress(content[i+1:])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "uncompress %v err: %v\n", packfile, err)
+		}
 	}
 
 	fmt.Printf("Content bytes length = %v\n", len(content))
 	fmt.Printf("Content bytes= \n%v\n", content)
-	fmt.Printf("Content = \n%v\n", string(content))
+	if t < 5 {
+		fmt.Printf("Content = \n%v\n", string(content))
+	}
 }
 
 func init() {
 	readPack := &readPackCmd{}
 
 	cmd := &cobra.Command{
-		Use:   "readpack",
+		Use:   "read-pack",
 		Short: "read a packfile at given position",
 		Run:   readPack.Run,
 	}
