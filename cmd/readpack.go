@@ -78,18 +78,18 @@ func (cmd *readPackCmd) Run(_ *cobra.Command, args []string) {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "uncompress %v err: %v\n", packfile, err)
 		}
-		fmt.Printf("Content bytes length = %v\n", len(content))
-		fmt.Printf("Content bytes= \n%v\n", content)
+		fmt.Printf("Content bytes length = %v\nContent bytes = \n", len(content))
+		fmt.Print(utils.Hexdump(content))
 		fmt.Printf("Content = \n%v\n", string(content))
 		return
 	}
 
 	if i+int(size) > len(content) {
-		fmt.Printf("Content bytes length = %v\n", len(content))
-		fmt.Printf("Content bytes= \n%v\n", content)
+		fmt.Printf("Content bytes length = %v\nContent bytes = \n", len(content))
+		fmt.Print(utils.Hexdump(content))
 	} else {
-		fmt.Printf("Content bytes length = %v\n", size)
-		fmt.Printf("Content bytes= \n%v\n", content[i:i+int(size)])
+		fmt.Printf("Content bytes length = %v\nContent bytes = \n", size)
+		fmt.Print(utils.Hexdump(content[i : i+int(size)]))
 	}
 }
 

@@ -1,9 +1,6 @@
 package git
 
 import (
-	"fmt"
-	"io/ioutil"
-
 	"github.com/go-git/go-git/v5/plumbing"
 )
 
@@ -18,25 +15,6 @@ const (
 	MaskLength      = uint8(127) // 0111 1111
 	MaskType        = uint8(112) // 0111 0000
 )
-
-func ParseObject(buffer []byte, o plumbing.EncodedObject) ([]byte, error) {
-	buffer = append(buffer, []byte("-------------------------------\n")...)
-	buffer = append(buffer, []byte(fmt.Sprintf("Hash = %v\n", o.Hash()))...)
-	buffer = append(buffer, []byte(fmt.Sprintf("Type = %v\n", o.Type()))...)
-	buffer = append(buffer, []byte(fmt.Sprintf("Size = %v\n", o.Size()))...)
-	r, err := o.Reader()
-	if err != nil {
-		return buffer, err
-	}
-	bs, err := ioutil.ReadAll(r)
-	if err != nil {
-		return buffer, err
-	}
-	buffer = append(buffer, []byte(fmt.Sprintf("Content bytes length = %v\n", len(bs)))...)
-	buffer = append(buffer, []byte(fmt.Sprintf("Content bytes= \n%v\n", bs))...)
-	buffer = append(buffer, []byte(fmt.Sprintf("Content = \n%v\n", string(bs)))...)
-	return buffer, nil
-}
 
 func ParseType(b byte) plumbing.ObjectType {
 	return plumbing.ObjectType((b & MaskType) >> FirstLengthBits)
