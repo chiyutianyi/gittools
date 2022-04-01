@@ -17,7 +17,7 @@ type readPackCmd struct {
 
 func (cmd *readPackCmd) Run(_ *cobra.Command, args []string) {
 	if len(args) < 3 {
-		fmt.Println("Usage: gittools readpack <packfile> <offset> <length>")
+		fmt.Println("Usage: gittools read-pack <packfile> <offset> <length>")
 		os.Exit(1)
 	}
 
